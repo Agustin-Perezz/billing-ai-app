@@ -21,13 +21,17 @@ test.describe("analyze page structure", () => {
 });
 
 test.describe("api/extract route", () => {
-  test("rejects invalid image payload with 400", async ({ request }) => {
+  test("returns 500 when OPENAI_API_KEY is missing", async ({ request }) => {
+    test.skip(
+      !process.env.CI,
+      "only runs in CI where OPENAI_API_KEY is absent",
+    );
     const res = await request.post("/api/extract", {
-      data: { image: "not-a-data-url" },
+      data: { image: "data:image/png;base64,iVBORw0KGgo=" },
     });
-    expect(res.status()).toBe(400);
+    expect(res.status()).toBe(500);
     const body = await res.json();
-    expect(body.error).toContain("Invalid image payload");
+    expect(body.error).toContain("OPENAI_API_KEY");
   });
 });
 
