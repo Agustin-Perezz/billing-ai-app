@@ -81,7 +81,7 @@ export function monthlyTrends(scans: readonly ExpenseScan[]): MonthlyTrend[] {
     const key = monthKey(s.date);
     byMonth.set(key, (byMonth.get(key) ?? 0) + s.amount);
   }
-  const keys = [...byMonth.keys()].sort();
+  const keys = [...byMonth.keys()].sort((a, b) => a.localeCompare(b));
   const max = Math.max(1, ...keys.map((k) => byMonth.get(k) ?? 0));
   const currentMonth = new Date().toISOString().slice(0, 7);
   return keys.map((key, i) => {
