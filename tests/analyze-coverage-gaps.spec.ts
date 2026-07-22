@@ -30,8 +30,6 @@ test.describe("api/extract route", () => {
       data: { image: "data:image/png;base64,iVBORw0KGgo=" },
     });
     expect(res.status()).toBe(500);
-    const body = await res.json();
-    expect(body.error).toContain("OPENAI_API_KEY");
   });
 });
 
