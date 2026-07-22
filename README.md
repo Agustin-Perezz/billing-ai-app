@@ -1,8 +1,15 @@
-# next-scaffold
+# billing-ai-app
 
 [![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=Agustin-Perezz_billing-ai-app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Agustin-Perezz_billing-ai-app)
 
-A production-ready [Next.js](https://nextjs.org) starter that keeps server and client boundaries explicit, pushes interactivity to the leaves of the component tree, and colocates data fetching with Server Actions. The scaffold follows a shift-left approach: linting, type checking, security scanning, and E2E tests run on every push and pull request so issues are caught as early as possible in the development cycle.
+An AI-powered billing analysis app. Upload a photo of a bill or receipt and GPT-4o-mini extracts the vendor, amount, date, category, and any savings found. Scans are stored locally and visualized in a dashboard with summary cards, monthly spending trends, and a recent-scans list.
+
+## How it works
+
+1. **Upload** — Drag-and-drop or select an image of a bill/receipt on the Analyze page.
+2. **Extract** — The `/api/extract` route sends the image to OpenAI's `gpt-4o-mini` with a structured-output schema (Zod), which returns vendor, amount, date, category, and savings.
+3. **Persist** — Scans are saved to `localStorage` (no backend database) and survive page reloads.
+4. **Visualize** — The dashboard aggregates scans into total expenses, top category, savings found, a monthly spending bar chart, and a recent-scans list.
 
 ## Tech Stack
 
@@ -11,11 +18,13 @@ A production-ready [Next.js](https://nextjs.org) starter that keeps server and c
 | Framework       | Next.js 16 (App Router)                        |
 | UI runtime      | React 19                                       |
 | Language        | TypeScript (strict)                           |
+| AI              | OpenAI `gpt-4o-mini` via Vercel AI SDK         |
 | Components      | base-ui + shadcn                               |
 | Styling         | Tailwind CSS v4                                |
 | Forms           | react-hook-form + zod                          |
+| State           | React hooks + `localStorage`                   |
 | Lint / Format   | Biome 2                                        |
-| E2E             | Playwright (Chromium)                          |
+| E2E             | Playwright (Chromium) + V8 coverage            |
 | Monitoring      | Sentry (`@sentry/nextjs`)                      |
 | Security scan   | Snyk (SARIF → GitHub Code Scanning)            |
 | Code quality    | SonarCloud (static analysis + Quality Gate)    |
@@ -25,7 +34,7 @@ A production-ready [Next.js](https://nextjs.org) starter that keeps server and c
 ## Folder Structure
 
 ```
-next-scaffold/
+billing-ai-app/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml                # SonarCloud, lint, typecheck, E2E, build, Snyk pipeline
@@ -34,13 +43,26 @@ next-scaffold/
 │   ├── 02_FRONTEND-FOLDER-STRUCTURE.md
 │   └── 04_TYPESCRIPT-STANDARDS.md
 ├── public/                       # Static assets served at root
+├── scripts/
+│   └── lcov-filter.mjs           # Strips non-src entries from lcov for SonarCloud
 ├── src/
-│   ├── app/                      # App Router routes (pages, layouts, actions)
+│   ├── app/
+│   │   ├── api/extract/route.ts  # POST handler — sends image to OpenAI, returns structured expense
+│   │   ├── analyze/              # Analyze page + dashboard components
+│   │   │   ├── components/       # TopBar, Explorer, UploadZone, SummaryCards, TrendsChart, RecentScans, BottomNav
+│   │   │   ├── aggregations.ts   # Summary cards, monthly trends, recent scans
+│   │   │   ├── schema.ts         # Zod expense schema + category constants
+│   │   │   └── data.ts           # Type definitions for dashboard data
+│   │   ├── layout.tsx
+│   │   └── page.tsx              # Landing page
 │   ├── components/
 │   │   └── ui/                   # Reusable base-ui / shadcn primitives
+│   ├── hooks/
+│   │   └── useBillingScans.ts    # localStorage-backed scan state
 │   └── lib/
 │       └── utils.ts              # Shared utilities (cn, helpers)
-├── tests/                        # Playwright E2E specs
+├── tests/                        # Playwright E2E specs + coverage fixtures
+├── global-teardown.ts            # CDP server-side V8 coverage collection
 ├── biome.json                    # Linter & formatter config
 ├── sonar-project.properties      # SonarCloud analysis configuration
 ├── next.config.ts                # Next.js configuration
@@ -101,13 +123,14 @@ Hooks are installed automatically via the `prepare` script when running `pnpm in
 
 The `.github/workflows/ci.yml` workflow runs on push to `main` and on pull requests:
 
-1. **sonar** — SonarCloud static analysis + Quality Gate (runs first; gates all other jobs)
-2. **quality** — Biome lint, TypeScript typecheck, Playwright E2E tests, and production build with Sentry source map upload
+1. **quality** — Biome lint, TypeScript typecheck, Playwright E2E tests (with V8 coverage), production build with Sentry source map upload, and SonarCloud coverage artifact upload
+2. **sonar** — Downloads coverage artifact and runs SonarCloud static analysis + Quality Gate (depends on `quality`)
 3. **snyk** — scans dependencies for high-severity vulnerabilities and uploads the results as SARIF to GitHub Code Scanning (allowed to continue on error so findings do not block the pipeline)
 
 ```
-sonar ──┬──> quality
-        └──> snyk
+quality ──> sonar
+         ╱
+snyk ────╳
 ```
 
 > **Note:** `SONAR_TOKEN` is the only SonarCloud secret you need to add manually. `GITHUB_TOKEN` is provided automatically by GitHub Actions. No `SONAR_HOST_URL` is required for SonarCloud.
@@ -124,6 +147,7 @@ Configure these in **Settings → Secrets and variables → Actions**:
 | `SENTRY_ORG`             | Sentry organization slug               |
 | `SENTRY_PROJECT`         | Sentry project slug                    |
 | `SNYK_TOKEN`             | Snyk API token for vulnerability scans |
+| `OPENAI_API_KEY`         | OpenAI API key for bill extraction     |
 
 ## Documentation
 
