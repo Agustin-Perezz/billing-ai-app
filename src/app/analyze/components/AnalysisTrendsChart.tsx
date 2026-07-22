@@ -16,17 +16,23 @@ export function AnalysisTrendsChart({ trends }: AnalysisTrendsChartProps) {
         <BarChart3 className="size-5 text-on-surface-variant" />
       </div>
       <div className="flex grow items-end justify-between gap-4 px-2 pt-6">
-        {trends.map((trend) => (
-          <div
-            key={trend.month}
-            className={`group relative h-full w-full ${trend.barClass}`}
-            style={{ height: `${trend.heightPercent}%` }}
-          >
-            <div className="absolute -top-6 left-1/2 -translate-x-1/2 font-mono text-xs opacity-0 group-hover:opacity-100">
-              {trend.amount}
+        {trends.length === 0 ? (
+          <p className="w-full py-10 text-center font-mono text-xs text-on-surface-variant">
+            No trends yet — upload a bill to begin.
+          </p>
+        ) : (
+          trends.map((trend) => (
+            <div
+              key={trend.month}
+              className={`group relative h-full w-full ${trend.barClass}`}
+              style={{ height: `${trend.heightPercent}%` }}
+            >
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 font-mono text-xs opacity-0 group-hover:opacity-100">
+                {trend.amount}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
       <div className="mt-2 flex justify-between border-t border-[#E5E7EB] px-2 pt-2">
         {trends.map((trend) => (
