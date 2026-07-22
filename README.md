@@ -1,6 +1,6 @@
 # next-scaffold
 
-[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=Agustin-Perezz_next-scaffold&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Agustin-Perezz_next-scaffold)
+[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=Agustin-Perezz_billing-ai-app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Agustin-Perezz_billing-ai-app)
 
 A production-ready [Next.js](https://nextjs.org) starter that keeps server and client boundaries explicit, pushes interactivity to the leaves of the component tree, and colocates data fetching with Server Actions. The scaffold follows a shift-left approach: linting, type checking, security scanning, and E2E tests run on every push and pull request so issues are caught as early as possible in the development cycle.
 
