@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+/monocart-report
+/.v8-coverage
 
 # next.js
 /.next/
