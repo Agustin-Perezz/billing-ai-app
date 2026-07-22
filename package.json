@@ -10,7 +10,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "typecheck": "tsc --noEmit",
-    "test": "playwright test",
+    "test": "playwright test && node scripts/lcov-filter.mjs",
     "test:ui": "playwright test --ui",
     "test:install": "playwright install --with-deps chromium",
     "test:clean": "rimraf .v8-coverage monocart-report coverage",
