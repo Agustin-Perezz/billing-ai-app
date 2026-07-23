@@ -11,7 +11,7 @@ const MOCK_EXPENSE = {
 test.describe("analyze route", () => {
   test("shows empty state before any scan", async ({ page }) => {
     await page.addInitScript(() => window.localStorage.clear());
-    await page.goto("/analyze");
+    await page.goto("/");
 
     await expect(page.getByRole("heading", { name: "ANALYSIS" })).toBeVisible();
     await expect(page.getByText("Total Expenses")).toBeVisible();
@@ -24,7 +24,7 @@ test.describe("analyze route", () => {
   test("bottom nav has 4 items", async ({ page }) => {
     await page.addInitScript(() => window.localStorage.clear());
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto("/analyze");
+    await page.goto("/");
     const nav = page.locator("nav");
     await expect(nav).toBeVisible();
     await expect(nav.getByRole("link")).toHaveCount(4);
@@ -39,7 +39,7 @@ test.describe("analyze route", () => {
         body: JSON.stringify({ expense: MOCK_EXPENSE }),
       });
     });
-    await page.goto("/analyze");
+    await page.goto("/");
 
     await page.setInputFiles('input[type="file"]', "tests/fixtures/bill.png");
 

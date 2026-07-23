@@ -12,7 +12,7 @@ test.describe("analyze page structure", () => {
   test("renders top bar, explorer, and bottom nav", async ({ page }) => {
     await page.addInitScript(() => window.localStorage.clear());
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto("/analyze");
+    await page.goto("/");
 
     await expect(page.getByRole("heading", { name: "ANALYSIS" })).toBeVisible();
     await expect(page.getByText("Total Expenses")).toBeVisible();
@@ -35,7 +35,7 @@ test.describe("api/extract route", () => {
 
 test.describe("localStorage persistence", () => {
   test("persists scans across page reloads", async ({ page }) => {
-    await page.goto("/analyze");
+    await page.goto("/");
     await page.evaluate(() => window.localStorage.clear());
     await page.route("**/api/extract", async (route) => {
       await route.fulfill({
@@ -56,7 +56,7 @@ test.describe("localStorage persistence", () => {
   });
 
   test("survives corrupted localStorage data", async ({ page }) => {
-    await page.goto("/analyze");
+    await page.goto("/");
     await page.evaluate(() =>
       window.localStorage.setItem("billing_scans", "{broken json"),
     );
@@ -71,7 +71,7 @@ test.describe("localStorage persistence", () => {
 
 test.describe("upload error handling", () => {
   test("silently handles API failure without crashing", async ({ page }) => {
-    await page.goto("/analyze");
+    await page.goto("/");
     await page.evaluate(() => window.localStorage.clear());
     await page.route("**/api/extract", async (route) => {
       await route.fulfill({
@@ -110,7 +110,7 @@ test.describe("multi-scan rendering", () => {
       },
     ];
 
-    await page.goto("/analyze");
+    await page.goto("/");
     await page.evaluate((data) => {
       window.localStorage.setItem("billing_scans", JSON.stringify(data));
     }, scans);
@@ -140,7 +140,7 @@ test.describe("multi-scan rendering", () => {
       },
     ];
 
-    await page.goto("/analyze");
+    await page.goto("/");
     await page.evaluate((data) => {
       window.localStorage.setItem("billing_scans", JSON.stringify(data));
     }, scans);
