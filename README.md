@@ -1,8 +1,8 @@
 # billing-ai-app
 
-[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=Agustin-Perezz_billing-ai-app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Agustin-Perezz_billing-ai-app)
-
 An AI-powered billing analysis app. Upload a photo of a bill or receipt and GPT-4o-mini extracts the vendor, amount, date, category, and any savings found. Scans are stored locally and visualized in a dashboard with summary cards, monthly spending trends, and a recent-scans list.
+
+<img width="1701" height="894" alt="Screenshot 2026-07-23 at 08-34-49 Create Next App" src="https://github.com/user-attachments/assets/0a66a9b3-6640-4b4a-b004-be94f13e2ac4" />
 
 ## How it works
 
